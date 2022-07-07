@@ -132,13 +132,13 @@
 //instance of narrowing
 
 function logValue(x: Date | string) {
-  if (x instanceof Date) {
-    //(parameter) x: Date
-    console.log(x.toUTCString());
-  } else {
-    //(parameter) x: string
-    console.log(x.toUpperCase());
-  }
+    if (x instanceof Date) {
+        //(parameter) x: Date
+        console.log(x.toUTCString());
+    } else {
+        //(parameter) x: string
+        console.log(x.toUpperCase());
+    }
 }
 
 //assignments
@@ -259,13 +259,13 @@ function logValue(x: Date | string) {
 //It needed to communicate what we know to the type checker.
 
 interface Circle {
-  kind: "circle";
-  radius: number;
+    kind: "circle";
+    radius: number;
 }
 
 interface Square {
-  kind: "square";
-  sideLength: number;
+    kind: "square";
+    sideLength: number;
 }
 
 //properly separated "Shape" out into two types with defferent
@@ -291,12 +291,32 @@ type Shape = Circle | Square;
 //the same checking works with "switch" statements as well.
 //try without "!" non-null assertions.
 function getArea(shape: Shape) {
-  switch (shape.kind) {
-    case "circle":
-      //(parameter) shape: Circle
-      return Math.PI * shape.radius ** 2;
-    case "square":
-      //(parameter) shape: Circle
-      return shape.sideLength ** 2;
-  }
+    switch (shape.kind) {
+        case "circle":
+            //(parameter) shape: Circle
+            return Math.PI * shape.radius ** 2;
+        case "square":
+            //(parameter) shape: Circle
+            return shape.sideLength ** 2;
+    }
+}
+
+//Exhaustiveness checking
+type Shape2 = Circle | Square | Triangle;
+
+interface Triangle {
+    kind: "triangle";
+    sideLength: number;
+}
+
+function getArea2(shape: Shape2) {
+    switch (shape.kind) {
+        case "circle":
+            return Math.PI * shape.radius ** 2;
+        case "square":
+            return shape.sideLength ** 2;
+        default:
+            const _exhaustiveCheck: never = shape;
+            return _exhaustiveCheck;
+    }
 }
