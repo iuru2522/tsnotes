@@ -206,16 +206,10 @@ function example() {
 
 //using type predicates
 
-function isFish(pet: Fish | Bird): pet is Fish {
-    return (pet as Fish).swim !== undefined;
-}
+// const zoo: (Fish | Bird)[] = [getSmallPet(), getSmallPet(), getSmallPet()]
+// const underWater1: Fish[] = zoo.filter(isFish);
+// //or, equivalntly
 
-let pet = getSmallPet()
+// const underWater2: Fish[] = zoo. filter(isFish) as Fish[];
 
-if (isFish(pet)) {
-    if (isFish(pet)){
-        pet.swim()
-    } else {
-        pet.fly()
-    }
-}
+//the predicate
