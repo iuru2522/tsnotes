@@ -302,8 +302,10 @@ function getArea(shape: Shape) {
 }
 
 //Exhaustiveness checking
+
 type Shape2 = Circle | Square | Triangle;
 
+//adding a new membet to the "Shape" union, will cause a TS error
 interface Triangle {
     kind: "triangle";
     sideLength: number;
@@ -316,6 +318,7 @@ function getArea2(shape: Shape2) {
         case "square":
             return shape.sideLength ** 2;
         default:
+            //Type 'Triangle' is not assignable to type 'never'.Type 'Triangle' is not assignable to type 'never'.
             const _exhaustiveCheck: never = shape;
             return _exhaustiveCheck;
     }
