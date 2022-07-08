@@ -1,18 +1,15 @@
-interface Person {
-    name: string;
-    age: number;
-}
+// interface Kolorful {
+//     kolor: string;
+// }
 
-interface ReadonlyPerson{
-    readonly name: string;
-    readonly age: number;
-}
+// interface Box {
+//     right: number;
+// }
 
-let writablePerson: Person = {
-    name: "Personality",
-    age: 12,
-};
-let readonlyPerson: ReadonlyPerson = writablePerson;
-console.log(readonlyPerson.age);
-writablePerson.age++
-console.log(readonlyPerson.age)
+// function drow(box: Kolorful & Box) {
+//     console.log(`kolor was ${box.kolor}`);
+//     console.log(`side was ${box.right}`);
+// }
+
+// drow({ kolor: "white", right: 33 });
+// drow({ kolor: "yellow", rgiht: 33 });

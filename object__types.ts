@@ -192,7 +192,7 @@ interface Country1 {
     name: string;
 }
 
-interface Canada extends Country1{
+interface Canada extends Country1 {
     capital: string;
 }
 
@@ -212,7 +212,7 @@ interface NumberDictionary {
 //properties of different types are acceptable if the index signature is a
 //union of the property types
 
-interface NumberOrStringDictionary{
+interface NumberOrStringDictionary {
     [index: string]: number | string;
     length: number;
     name: string;
@@ -228,6 +228,128 @@ interface ReadonlyStrinfArray {
     readonly [index: number]: string;
 }
 
+//you can't set "myArray[2]" because the index signature is "readonly"
 let myArray1: ReadonlyStrinfArray = getReadOnlyStringArrya();
 //Index signature in type 'ReadonlyStrinfArray' only permits reading.
 myArray1[2] = 'Yo';
+
+//extendind types
+
+
+//its common to have types that might be more specific versions of
+//other types.
+
+// interface BasicAddress{
+//     name?: string;
+//     street: string;
+//     city: string;
+//     country: string;
+//     postalCode: string;
+// }
+
+//in some situations that's enouth, but addresses often have a unit
+//number associated with them if the building at an address has
+//multiple units.
+
+// interface AddressWithUnit{
+//     name?: string;
+//     unit: string;
+//     street: string;
+//     city: string;
+//     country: string;
+//     postalCode: string;
+// }
+
+interface BasicAddress {
+    name?: string;
+    street: string;
+    city: string;
+    country: string;
+    postalCode: string;
+}
+
+
+//the "extends" keyword on an "interface" allows us to
+//effectively copy member from other named types, and add whateeve new
+//members we want.
+//this can be useful for cutting down the amount of type declaration 
+//boilerplate we have to write, and for signalling intent that several
+//different declarations of the same property
+//might be related. For example, AddressWithUnit didn't need repeat the 
+//street" property
+interface AddressWithUnit extends BasicAddress {
+    unit: string;
+}
+
+//interface can also extend from multiple types
+
+interface Colorful {
+    color: string;
+
+}
+
+interface Circle {
+    radius: number;
+}
+
+interface ColourfulCircle extends Colorful, Circle { }
+
+const cc: ColourfulCircle = {
+    color: "white",
+    radius: 10
+}
+
+//INTERSECTION TYPES
+
+
+//'interface' allowed to build new types from other types by extending them
+//TS provides another construct called intersection types
+//that is mainly used to combine existing object types.
+interface Colorful {
+    color: string;
+}
+
+interface Circle {
+    radius2: string;
+}
+
+type ColorfulCircle = Colorful & Circle;
+
+interface Kolorful {
+    kolor: string;
+}
+interface Box {
+    side: number;
+}
+
+function dr(box: Kolorful & Box) {
+    console.log(`kolor was ${box.kolor}`);
+    console.log(`side was ${box.side}`);
+}
+
+//Argument of type '{ kolor: string; sdie: number; }' 
+//is not assignable to parameter of type 'Kolorful & Box'.
+//Object literal may only specify known properties, and 
+//'sdie' does not exist in type 'Kolorful & Box'
+
+dr({ kolor: "white", side: 3 });
+dr({ kolor: "yellow", sdie: 3 });
+
+
+//interfaces vs intersections
+
+//Generic Object Types
+
+interface Mac{
+    contents: any;
+}
+
+let x: Mac{
+    contents: "yoyo",
+};
+// we could check 'x.contents'
+if(typeof x.contents === "string"){
+    console.log(x.contents.toLowerCase())
+}
+// or we could use a type assertion
+console.log((x.contents as string).toLowerCase())
