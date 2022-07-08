@@ -400,6 +400,13 @@ function summ({a, b, c}: {a: number; b: number; c: number}){
 
 //return type void
 
+//the "void" return type for functions can produce unusual,
+//but expected behavior
+
+//contextual typing with a return type of "void" does not force
+//functions to not return something.
+//
+
 type voidFunc = () => void;
 
 const f1: voidFunc = () => {
@@ -411,15 +418,34 @@ const f2: voidFunc = () => true;
 const f3: voidFunc = function (){
   return true;
 }
+//when the return value od noe of these functions is assigned to
+//another variable, it will retain the type of "void"
+const v1 = f1();
+const v2 = f2();
+const v3 = f3();
 
 
+const src = [1, 2, 3];
+
+const dst = [0];
+
+src.forEach((el) => dst.push(el))
+
+console.log(src)
 
 
+//one other special to be aware of, when a literal function
+// definition has a void return type, that function must not return anything
 
+function ontario(): void {
+  //@ts-expect-error
+  return true;
+}
 
-
-
-
+const w212 = function (): void {
+//@ts-expect-error
+  return true;
+}
 
 
 
