@@ -128,7 +128,6 @@ f(undefined);
 
 //optional parameters in Callbacks
 
-
 //after optional parameters and function type expressions, it is good to make the following
 //mistakes wher writing functions that invoke callbacks;
 function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
@@ -139,8 +138,32 @@ function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
 
 //what people usually intend when writing index? as an optional parameter
 //is that they want both of these calls to be legal
-declare function myForrEach(arr: any[],
-    callback: (arg: any, index?: number) => void
-    ): void
-myForrEach([1, 2, 3], (a) => console.log(a))
-myForrEach([1, 2, 3], (a, i) => console.log(a, i))
+declare function myForrEach(
+  arr: any[],
+  callback: (arg: any, index?: number) => void
+): void;
+myForrEach([1, 2, 3], (a) => console.log(a));
+myForrEach([1, 2, 3], (a, i) => console.log(a, i));
+
+function theFunc(arr: any[], callback: (arg: any, index?: number) => void) {
+  for (let i = 0; i < arr.length; i++) {
+    //I don't feel like prov. index today
+    callback(arr[i]);
+  }
+}
+
+
+//In JS, if you call a function with more arguments than there are parameters,
+// the extra arguments are simply ignored. 
+//TS behaves the same way. Functions with fewer parameters 
+//(of the same types) can always take the place of functions with more parameters.
+declare function ofFunc(
+  arr: any[],
+  callback: (arg: any, index?: number) => void
+): void;
+
+ofFunc([1, 2, 3], (a, i) => {
+
+    //Object is possibly 'undefined'.
+  console.log(i.toFixed());
+});
