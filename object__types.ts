@@ -340,19 +340,19 @@ dr({ kolor: "yellow", sdie: 3 });
 
 //Generic Object Types
 
-interface Mac{
+interface Mac {
     contents: any;
 }
 
-let x: Mac{
+let w: Mac{
     contents: "yoyo",
 };
 // we could check 'x.contents'
-if(typeof x.contents === "string"){
-    console.log(x.contents.toLowerCase())
+if (typeof w.contents === "string") {
+    console.log(w.contents.toLowerCase())
 }
 // or we could use a type assertion
-console.log((x.contents as string).toLowerCase())
+console.log((w.contents as string).toLowerCase())
 
 
 //one type safe approach would be to instead scaffold out different
@@ -366,7 +366,7 @@ interface StringBox {
     contents: string;
 }
 
-interface BooleanBox{
+interface BooleanBox {
     content: boolean;
 }
 
@@ -378,11 +378,11 @@ interface BooleanBox{
 function setContents(box: StringBox, newContents: string): void;
 function setContents(box: NumberBox, newContents: number): void;
 function setContents(box: BooleanBox, newContents: boolean): void;
-function setContents(box: { contents: any}, newContents: any){
+function setContents(box: { contents: any }, newContents: any) {
     box.contents = newContents;
 }
 
-interface Boxx<Type>{
+interface Boxx<Type> {
     contents: Type;
 }
 //Type 'Box' is not generic.
@@ -390,7 +390,7 @@ interface Boxx<Type>{
 let box: Boxx<string>
 
 //-----------------------------------------------------------
-interface Box2<Type>{
+interface Box2<Type> {
     contents: Type;
 }
 
@@ -398,11 +398,11 @@ interface StringBox2 {
     contents: string;
 }
 
-let boxA: Box2<string> = { contents: "hello"};
+let boxA: Box2<string> = { contents: "hello" };
 //(property) Box2<string>.contents: string
 boxA.contents;
 
-let boxB: StringBox = { contents: "world"};
+let boxB: StringBox = { contents: "world" };
 //(property) StringBox.contents: string
 boxB.contents;
 
@@ -429,7 +429,7 @@ function setContents2<Type>(box: BOX<Type>, newContents: Type) {
 //it is worth noting that aliases can also be generic.
 //we could have defined our new Box<Type> interface, which was
 
-interface Box3<Type>{
+interface Box3<Type> {
     contents: Type;
 }
 
@@ -447,19 +447,125 @@ type OneOrManyOrNull<Type> = OrNull<OneOrMany<Type>>;
 type OneOrManyOrNullString = OneOrManyOrNull<string>;
 
 //The Array Type
-function doSome(value: Array<string>){
+function doSome(value: Array<string>) {
     //
 }
 let maArray: string[] = ["yo", "world"];
 doSome(maArray);
 doSome(new Array("yo", "world"));
 //------------------------------------------------------------
-interface Number{}
-interface String{}
-interface Boolean{}
-interface Symbol{}
-interface Array<Type>{
+//Arrays itself is a generic type
+//generc object types are often some sort of container type that 
+//work independently of the type of elements they contain. 
+//It's ideal for data structures to work this way so that they'are
+//re-usable across different data types.
+interface Number { }
+interface String { }
+interface Boolean { }
+interface Symbol { }
+interface Arrays<Type> {
+    /* 
+    * gets or sets the length of the array
+     */
     length: number;
+    /* 
+    * Removes the last element from an array and return it.
+     */
     pop(): Type | undefined;
+    /* 
+    *Append new elements to an array, and returns the new length of the array.
+     */
     push(...items: Type[]): number;
 }
+
+//THE ReadonlyArray Type
+
+function doStuff(values: ReadonlyArray<string>) {
+    //we can mutate "values"....
+    const copy = values.slice();
+    console.log(`The first value is ${values[0]}`);
+
+    //..but we can't mutate "values"
+    //Property 'push' does not exist on type 'readonly string[]'.
+    values.push("hello");
+}
+//'ReadonlyArray' only refers to a type, but is being used as a value here.
+new ReadonlyArray("red", "green", "blue");
+
+//instead, we can assign regular "Array"s to "ReadonlyArray"s.
+
+const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
+
+//TS provieds a shorthand syntax for Array<Type> with Type[]
+// is also provides a shorthand syntax for 
+//ReadonlyArray<Type> with readonly Type[]
+function doStufff(values: readonly string[]) {
+    //we can mutate "values"....
+    const copy = values.slice();
+    console.log(`The first value is ${values[0]}`);
+
+    //..but we can't mutate "values"
+    //Property 'push' does not exist on type 'readonly string[]'.
+    values.push("hello");
+}
+
+let x: readonly string[] = [];
+let y: string[] = [];
+
+x = y;
+//The type 'readonly string[]' is 'readonly' and cannot be 
+//assigned to the mutable type 'string[]'.
+y = x;
+
+//Tuple Types
+
+// type StringNumberPair = [string, number];
+
+// function painter(pair: [string, number]) {
+//     //const k: string
+//     const k = pair[0];
+//     //const q: number
+//     const q = pair[1];
+// }
+// painter(["yo", 1000])
+
+
+//to index past the number of elements -> get an error
+function paint(pair: [string, boolean]){
+    //Tuple type '[string, number]' of length '2' has no element at index '2'.
+    const u = pair[2];
+}
+
+//descructure tuples using js array destructuring
+
+function ssome( stringHash: [string, number]){
+    const [inputString, hash] = stringHash;
+    //const inputString: string
+    console.log(inputString);
+    //const hash: number
+    console.log(hash)
+}
+// tuple types are useful in heavilt convension-based API's
+//where each element's meaning is "obvious". This give flexibility 
+//in whatever we want to name our variables when we destrucutre them
+//
+interface StringNumberPair {
+    //specialized properties
+    length: 2;
+    0: string;
+    1: number;
+    slice(start?: number, end?: number): Array<string | number>;
+}
+
+type Either2dOr3d = [number, number, number?];
+function setCoordinate(coord: Either2dOr3d){
+    //const z: number | undefined
+    const [x, y, z] = coord;
+
+    console.log(`Provided coordinated had ${coord.length} dimensions`);
+}
+//typles can also have rest elements which have to be an array/type tuple
+
+type StringNumberBooleans = [string, number, ...boolean[]];
+type StringBooleansNumber = [string, ...boolean[], number ];
+type BooleanStringNumber = [...boolean[], string, number];
