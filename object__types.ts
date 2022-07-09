@@ -353,3 +353,113 @@ if(typeof x.contents === "string"){
 }
 // or we could use a type assertion
 console.log((x.contents as string).toLowerCase())
+
+
+//one type safe approach would be to instead scaffold out different
+//"Box" types for every type of "contents"
+
+interface NumberBox {
+    contents: number;
+}
+
+interface StringBox {
+    contents: string;
+}
+
+interface BooleanBox{
+    content: boolean;
+}
+
+//but that means we'll have to create different functions or overloads
+//of functions, to operate
+
+//that's a lot of boilerplate.
+//instead -> make a generic "Box" type which declares a type parameter
+function setContents(box: StringBox, newContents: string): void;
+function setContents(box: NumberBox, newContents: number): void;
+function setContents(box: BooleanBox, newContents: boolean): void;
+function setContents(box: { contents: any}, newContents: any){
+    box.contents = newContents;
+}
+
+interface Boxx<Type>{
+    contents: Type;
+}
+//Type 'Box' is not generic.
+// let box: Box<string>
+let box: Boxx<string>
+
+//-----------------------------------------------------------
+interface Box2<Type>{
+    contents: Type;
+}
+
+interface StringBox2 {
+    contents: string;
+}
+
+let boxA: Box2<string> = { contents: "hello"};
+//(property) Box2<string>.contents: string
+boxA.contents;
+
+let boxB: StringBox = { contents: "world"};
+//(property) StringBox.contents: string
+boxB.contents;
+
+//-------------------------------------------------------------
+
+
+interface BOX<Type> {
+    contents: Type;
+}
+
+// interface Apple {
+//     //
+// }
+// //same as '{contents: Apple}'
+// type AppleBox = BOX<Apple>
+
+//this also means that we can avoid overloads entirely 
+//by instead using generic functions
+
+function setContents2<Type>(box: BOX<Type>, newContents: Type) {
+    box.contents = newContents;
+}
+
+//it is worth noting that aliases can also be generic.
+//we could have defined our new Box<Type> interface, which was
+
+interface Box3<Type>{
+    contents: Type;
+}
+
+//by using a type alias intead
+
+type Box4<Type> = {
+    contents: Type;
+}
+
+type OrNull<Type> = Type | null;
+type OneOrMany<Type> = Type | Type[];
+//type OneOrManyOrNull<Type> = OneOrMany<Type> | null
+type OneOrManyOrNull<Type> = OrNull<OneOrMany<Type>>;
+//type OneOrManyOrNullString = OneOrMany<string> | null
+type OneOrManyOrNullString = OneOrManyOrNull<string>;
+
+//The Array Type
+function doSome(value: Array<string>){
+    //
+}
+let maArray: string[] = ["yo", "world"];
+doSome(maArray);
+doSome(new Array("yo", "world"));
+//------------------------------------------------------------
+interface Number{}
+interface String{}
+interface Boolean{}
+interface Symbol{}
+interface Array<Type>{
+    length: number;
+    pop(): Type | undefined;
+    push(...items: Type[]): number;
+}
