@@ -564,8 +564,43 @@ function setCoordinate(coord: Either2dOr3d){
 
     console.log(`Provided coordinated had ${coord.length} dimensions`);
 }
-//typles can also have rest elements which have to be an array/type tuple
+//tuples can also have rest elements which have to be an array/type tuple
+
+
+//a tuple with a rest element has no set "length" - it only
+//has a set of well-known elements in different positions.
 
 type StringNumberBooleans = [string, number, ...boolean[]];
 type StringBooleansNumber = [string, ...boolean[], number ];
 type BooleanStringNumber = [...boolean[], string, number];
+
+const a: StringNumberBooleans = ["hello", 1];
+const a: StringNumberBooleans = ["yoo", 2, true];
+const a: StringNumberBooleans = ["helloman", 2, true, false, false, true, true];
+
+//
+function readButtonInput(...args: [string, number, ...boolean[]]){
+    const [name, version, ...input] = args;
+}
+
+//is basically equivalent to:
+//this is handy when you take a variable number of arguments with a rest parameter, and you need a minimum number of elements, but you don't want to introduce intermediate variables
+
+function readButtoninput(good: string, version: number, ...inpt: boolean[] ){}
+
+//readonly Tuple Types
+
+function doSomet(pair: readonly [string, number]){
+    //Cannot assign to '0' because it is a read-only property.
+    pair[0] = "yoyo";
+}
+
+//distanceFromOrigin never modifies its elements, but expects a mutable tuple. 
+let point = [true, false] as const;
+//since point's type was inferred as readonly [3,4] it won't be compatible with [number, number] since that type can't guarantee point's elements won't be mutated.
+function distanceFromOrigin([x, y]:[boolean, boolean]){
+    return Math.sqrt(x ** 2 + y ** 2)
+}
+//Argument of type 'readonly [3, 4]' is not assignable to parameter of type '[number, number]'.
+//The type 'readonly [3, 4]' is 'readonly' and cannot be assigned to the mutable type '[number, number]'.
+distanceFromOrigin(point)
