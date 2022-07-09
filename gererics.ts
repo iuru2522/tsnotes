@@ -141,6 +141,110 @@ stringNumeric.add = function(x, y){
 
 console.log(stringNumeric.add(stringNumeric.zeroValue, "test"));
 
+//generic constraints
+
+
+
+function loggingIndentity<Type>(arg: Type): Type {
+    //Property 'length' does not exist on type 'Type'.
+    console.log(arg.length);
+    return arg;
+}
+
+interface Lengthwise {
+    length: number;
+}
+function logIndentity<Type extends Lengthwise>(arg: Type): Type {
+    console.log(arg.length);//
+    return arg;
+}
+
+//because the generic function is now constrained , it will no longer work over any and all types:
+
+
+//Argument of type 'number' is not assignable to parameter of type 'Lengthwise'.
+logIndentity(3);
+
+//instead: pass in values whose type has all the required properties
+
+logIndentity({length: 10, value: 3});
+
+//using type parameters in generic constraints
+
+function getProp<Type, Key extends keyof Type>(obj: Type, key: Key){
+    return obj[key];
+}
+
+let x = { a: 1, b: 2, c: 3, d: 4};
+
+getProp(x, "a");
+//Argument of type '"K"' is not assignable to parameter of type '"a" | "b" | "c" | "d"'.
+getProp(x, "K");
+
+//using class types in generics
+
+//when creating factories in TS using generics, it is necessary to refer to class types by their
+//constructor functions.
+
+function create<Type>(c:{new (): Type}): Type {
+    return new c();
+}
+
+//more advanced example
+// uses the prototype to infer and constrain relationship between the constructor function
+//and the instance side of class types.
+
+
+class BeeKeeper{
+    hasMask: boolean = true;
+}
+class ZooKeeper {
+    nametag: string = "Mikle";
+}
+class Animal {
+    numLegs: number = 4;
+}
+class Bee extends Animal {
+    keeper: BeeKeeper = new BeeKeeper();
+}
+class Lion extends Animal {
+    keeper: ZooKeeper = new ZooKeeper();
+}
+function createInstance<A extends Animal>(c: new () => A): A {
+    return new c();
+}
+
+createInstance(Lion).keeper.nametag;
+createInstance(Bee).keeper.hasMask;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
