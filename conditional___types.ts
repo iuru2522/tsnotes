@@ -62,7 +62,7 @@ type Message<T> = T["message"];
 
 
 
-type MessageOf<T extends {message: unknown}> =T["message"];
+type MessageOf<T extends { message: unknown }> = T["message"];
 interface Email {
     message: string;
 }
@@ -70,17 +70,68 @@ interface Email {
 //type EmailMessageContents = string
 type EmailMessageContents = MessageOf<Email>;
 
+//-------------------------------------------------------------------------------
+type MessageOff<T> = T extends { message: unknown } ? T["message"] : never;
 
+interface Email {
+    message: string;
+}
 
+interface Dog {
+    bark(): void;
+}
 
+//type EmailMessageContentss = string
+type EmailMessageContentss = MessageOff<Email>;
 
+//type DogMessageContents = never
+type DogMessageContents = MessageOff<Dog>;
+//=============================================================================
 
+//when "Flatten" is given an array type, is uses an indexed access
+//with "number" to fetch out string[]'s element type.
+type Flatten<T> = T extends any[] ? T[number] : T;
+//extracts out the element type
+//type Str = string
+type Str = Flatten<string[]>
+//type Num = number
+type Num = Flatten<number>
+//====================================================================
+//inferring within condition types
 
+type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 
+type GetReturnType<Type> = Type extends (...args: never[]) => infer Return
+    ? Return
+    : never;
+//type Numnum = number
+type Numnum = GetReturnType<() => number>;
+//type Strstr = string
+type Strstr = GetReturnType<(x: string) => string>;
+//type Bools = boolean[]
+type Bools = GetReturnType<(a: bollean, b: boolean) => boolean[]>;
 
+declare function stringOrNum(x: string): number;
+declare function stringOrNum(x: number): string;
+declare function stringOrNum(x: string | number): string | number;
+//type T1 = string | number
+type T1 = ReturnType<typeof stringOrNum>
+//=============================================================================================
+//DISTRIBUTIVE CONDITIONAL TYPES
 
+type ToArrayto<Type> = Type extends any ? Type[] : never;
 
+type ToArraytoto<Type> = Type extends any ? Type[] : never;
+//type StrArrOrNumArr = string[] | number[]
+type StrArrOrArr = ToArrayto<string> | number>;
 
+//typically, distributivity is the desired behavior.
+//to aboid that behavior just surround each side of the "extends"
+//keyword with square brackets.
+type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
+// StrArrOrNumArr is no longer a union
+//type StrArrOrNumArr = (string | number)[]
+type StrArrOrNumArr = ToArrayNonDist<string | number>;
 
 
 
