@@ -77,7 +77,7 @@ type PropEventSource2<Type> = {
     on<Key extends string & keyof Type>
     (eventName: `${Key}Changed`, callback: (newValue: Type[Key]) => void): void;
 }
-declare function makeWatchedObject2<Type>(obj:Type): Type & PropEventSource2<Type>l
+declare function makeWatchedObject2<Type>(obj:Type): Type & PropEventSource2<Type>;
 
 const person2 = makeWatchedObject2({
     firstName: "George",
@@ -93,3 +93,40 @@ person2.on("ageChanged", newAge => {
         console.warn("warning! negative age");
     }
 })
+//==========================================================================
+//INTRINSIC STRING MANIPULATION TYPES
+
+//to help with string manipulation, TS includes a set of types
+//which can help used in string manipulation.
+//these types come build-in to the compipler for performance and 
+// can't be found in the .d.ts !!!
+
+//Uppercase<StringType>
+type Greetings = "Hello, world";
+//type ShoutyGreeting = "HELLO, WORLD"
+type ShoutyGreeting = Uppercase<Greetings>;
+
+type ASCIICacheKey<Str extends string> = `ID-${Uppercase<Str>}`
+//type MAINID = "ID-MY_APP"
+type MAINID = ASCIICacheKey<"my_app">
+
+//Lowercase<StringType>
+
+type HomeLand = "Ukraine";
+//type NotCorrect = "ukraine"
+type NotCorrect = Lowercase<HomeLand>;
+type ASCIICacheKey2<Str extends string> = `id-${Lowercase<Str>}`
+//type TheMainID = "id-my-app"
+type TheMainID =ASCIICacheKey2<"MY-APP">;
+
+//Capitalize<StringType>
+
+type LowercaseHomeLand = "ukraine";
+//type Home = "Ukraine"
+type Home = Capitalize<LowercaseHomeLand>;
+
+//Uncapitalize<StringType>
+
+type UppercaseHomeLand = "UKRAINE";
+//type Mistake = "uKRAINE";
+type Mistake = Uncapitalize<UppercaseHomeLand>;
