@@ -452,6 +452,133 @@ class FF {
 class mSafe {
     private secretKey = 12345;
 }
-
+//in js code
 const v = new mSafe()
 console.log(v.secretKey)
+
+class SafeClass {
+    private secKey = 1234;
+}
+
+const qq = new SafeClass()
+//Property 'secKey' is private and only accessible within class 'SafeClass'
+console.log(qq.secKey);
+//Okay
+console.log(qq["secKey"]);
+
+class niceDog {
+    #barkAmount = 0;
+    personality = "happy";
+    constructor(){}
+}
+
+//"use" strict
+var _Dog_barkAmount;
+class theDog{
+    constructor(){
+        _Dog_barkAmount.set(this, 0)
+        this.persn = "happy";
+    }
+}
+_Dog_barkAmount = new WeakMap();
+
+//STATIC MEMBERS
+
+//classes may have "static" members. These members aren't associated with
+// a particular instance of the class. They can be accessed through the class
+//constructor object itself
+
+class yourClass {
+    static x = 0;
+    static printX(){
+        console.log(yourClass.x);
+    }
+}
+console.log(yourClass.x);
+yourClass.printX();
+
+//static members can also use the same public, protected and private visibility
+
+class futureClass {
+    private static x = 0;
+}
+//Property 'x' is private and only accessible within class 'futureClass'.
+console.log(futureClass.x);
+
+//static members are also inherited
+
+class furuteBase{
+    static getG(){
+        return "!"
+    }
+}
+class Der extends furuteBase {
+    myG = Der.getG();
+}
+
+//special static names
+
+class S {
+    //Static property 'name' conflicts with built-in property 'Function.name' of constructor function 'S'.
+    static name = "S!";
+}
+
+//why no static classes?
+
+class MyStaticClass {
+    static someSome(){}
+}
+
+function someSome(){}
+const MyHeplerOject = {
+    doSomething(){}
+}
+
+//"Static" BLOCKS IN CLASSES
+//static block allow you to write a sequence of statements with their own scope
+//that can access private fields withthin the containing class.
+
+declare function loadLastInstances(): any[]
+
+class Foo {
+    static #count = 0;
+    get count(){
+        return Foo.#count;
+    }
+    static {
+        try{
+            const lastInstances = loadLastInstances();
+            Foo.#count += lastInstances.length;
+        }
+        catch{}
+    }
+}
+
+//GENERIC CLASSES
+//classes, much like interfaces, can be genereic.
+//when a generic class is istantiated with "new", its type are 
+//inferref the same way as in function call;
+class BOX<Type> {
+    contents: Type;
+    constructor(value: Type){
+        this.contents = value;
+    }
+}
+//const z: BOX<string>
+const z = new BOX("right!")
+
+//classes can use generic constraints and defaults the same way as interfaces
+
+//TYPE PARAMETERS IN STATIC MEMBERS
+
+class beat<Type>{
+
+    //Static members cannot reference class type parameters
+    static defaultValue: Type;
+}
+
+//rememeber that the types are fully erased! At runtime, there's only one "beat.defaultValue" property slot. This means that setting 
+//beat<string>.defaultValue( if that were possible) would also change "beat<number>.defaultValue - is not good.
+//the static member of a generic class can never refer to the class's type parameters.
+
+
