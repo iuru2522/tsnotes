@@ -153,7 +153,7 @@ class Thing {
 
 class MyClass {
     [s: string]: boolean | ((s: string) => boolean);
-    check (s: sting){
+    check(s: sting) {
         return this[s] as boolean;
     }
 }
@@ -168,7 +168,7 @@ interface Pingable {
 }
 
 class Sonar implements Pingable {
-    ping(){
+    ping() {
         console.log("ping!");
     }
 }
@@ -176,7 +176,7 @@ class Sonar implements Pingable {
 //Class 'Ball' incorrectly implements interface 'Pingable'.
 //Property 'ping' is missing in type 'Ball' but required in type 'Pingable'.
 class Ball implements Pingable {
-    pong(){
+    pong() {
         console.log("pong")
     }
 }
@@ -187,11 +187,11 @@ interface Checkable {
     check(name: string): boolean;
 }
 
-class NameChecher implements Checkable{
+class NameChecher implements Checkable {
     //Parameter 's' implicitly has an 'any' type.
     check(s) {
         return s.toLowercse() === "ok"
-        
+
     }
 }
 
@@ -211,14 +211,14 @@ c.y = 10;
 //extends Clauses
 
 class Animal2 {
-    move(){
+    move() {
         console.log("Moving along!")
     }
 }
 
 class Dog extends Animal2 {
-    woof(times: number){
-        for(let i = 0; i < times; i++){
+    woof(times: number) {
+        for (let i = 0; i < times; i++) {
             console.log("woof!");
         }
     }
@@ -231,17 +231,17 @@ ddd.woof();
 //overriding methods
 
 class theBase {
-    greet(){
+    greet() {
         console.log("Hello, world!")
     }
 }
 
 class Derived2 extends theBase {
-    greet(name?: string){
-        if(name === undefined){
+    greet(name?: string) {
+        if (name === undefined) {
             super.greet();
 
-        }else {
+        } else {
             console.log(`yoy, ${name.toUpperCase()}`);
         }
     }
@@ -255,7 +255,7 @@ const B: theBase = d;
 B.greet();
 
 class thaBase {
-    greet(){
+    greet() {
         console.log("yo world");
     }
 }
@@ -263,7 +263,7 @@ class thaBase {
 class thaDerived extends thaBase {
     //Property 'greet' in type 'Derived' is not assignable to the same property in base type 'Base'.
     //Type '(name: string) => void' is not assignable to type '() => void'.
-    greet(name: string){
+    greet(name: string) {
         console.log(`hello, ${name.toUpperCase()}`);
     }
 }
@@ -271,7 +271,7 @@ class thaDerived extends thaBase {
 declare class base {
     greet(): void;
 }
-declare class derived extends base {};
+declare class derived extends base { };
 
 const bq: base = new derived();
 //// Crashes because "name" will be undefined
@@ -288,16 +288,170 @@ interface DogA extends AnimalA {
 
 class AnimalHouse {
     resident: AnimalA;
-    constructor(animal: AnimalA){
+    constructor(animal: AnimalA) {
         this.resident = animal;
     }
 }
 
-class DogHouse extends AnimalHouse{
+class DogHouse extends AnimalHouse {
     //
     //
     declare resident: DogA;
     constructor(dog: DogA) {
-        super(dog);   
-    }  
+        super(dog);
+    }
 }
+
+//initialization order
+//Note: If you don’t plan to inherit from built-in types like Array, Error, Map, etc. or your compilation target is explicitly set to ES6/ES2015 or above, you may skip this section
+class tBase {
+    name = "base";
+    constructor() {
+        console.log("Name " + this.name)
+    }
+}
+class tDerived extends Base {
+    name = "derived";
+}
+
+const q = new tDerived();
+
+//for a subclass like the following
+
+class MsgError extends Error {
+    constructor(m: string) {
+        super(m)
+    }
+    sayYo() {
+        return "Hi " + this.message;
+    }
+}
+
+class MesError extends Error {
+    constructor(m: string) {
+        super(m);
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, MesError.prototype)
+    }
+
+    sayHello() {
+        return "hello " + this.message;
+    }
+}
+
+//MEMBER VISIBILITY
+
+//public
+
+class Onemore{
+    public hi(){
+        console.log("zdorov")
+    }
+}
+
+const g = new Onemore();
+g.hi();
+
+//protected
+//protected members are only visible to subclasses of the class they're declared in
+
+class oohHi{
+    public sayHi(){
+        console.log("Hello, " + this.getname());
+    }
+    protected getname(){
+        return "ya!"
+    }
+}
+
+class sHello extends oohHi{
+    public howdy(){
+        console.log("Howdy, " + this.getname());
+    }
+}
+
+const k = new sHello();
+k.sayHi();//Okay
+//Property 'getname' is protected and only accessible within class 'oohHi' and its subclasses.
+k.getname();
+
+
+//exposure of protected members
+class Fundamentals {
+    protected d = 10;
+}
+
+class Floor extends Fundamentals {
+    //// No modifier, so default is 'public'
+    d = 15;
+}
+
+const y = new Floor();
+console.log(y.d)//okay
+
+
+//cross-hierarchy protected acess
+
+class fromScratch {
+    protected x: number = 1;
+}
+class der1 extends fromScratch{
+    protected x: number = 5;
+}
+class der2 extends fromScratch {
+    f1(other: der2){
+        other.x = 10;
+    }
+    f2(other: fromScratch){
+        //Property 'x' is protected and only accessible through an instance of class 'der2'. This is an instance of class 'fromScratch'.
+        other.x =10;
+    }
+} 
+
+//private
+
+//"private" is like "protected", but doesn't allow access tot he member even from subclass
+
+class FundamentalsFirst {
+    private of = 0;
+}
+
+const p = new FundamentalsFirst();
+// Can't access from outside the class
+//Property 'of' is private and only accessible within class 'FundamentalsFirst'
+console.log(p.of)
+class FundamentalsSecond extends FundamentalsFirst {
+    showX(){
+        //Property 'of' is private and only accessible within class 'FundamentalsFirst'.
+        console.log(this.of)
+    }
+}
+
+//because "private" members visible to derived classes, a derived class can't
+//increase its visibility
+
+class house {
+    private w = 19;
+}
+class dance extends house {
+    //Class 'dance' incorrectly extends base class 'house'.
+    //Property 'w' is private in type 'house' but not in type 'dance'.
+    w = 1;
+}
+
+//cross-instance private access
+class FF {
+    private x =11;
+    public sameAs(other: FF){
+        return other.x === this.x;
+    }
+}
+
+//caveats
+
+class mSafe {
+    private secretKey = 12345;
+}
+
+const v = new mSafe()
+console.log(v.secretKey)
