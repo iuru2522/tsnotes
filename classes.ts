@@ -175,10 +175,129 @@ class Sonar implements Pingable {
 
 //Class 'Ball' incorrectly implements interface 'Pingable'.
 //Property 'ping' is missing in type 'Ball' but required in type 'Pingable'.
-
-
 class Ball implements Pingable {
     pong(){
         console.log("pong")
     }
+}
+
+//Cautions
+
+interface Checkable {
+    check(name: string): boolean;
+}
+
+class NameChecher implements Checkable{
+    //Parameter 's' implicitly has an 'any' type.
+    check(s) {
+        return s.toLowercse() === "ok"
+        
+    }
+}
+
+
+interface A {
+    x: number;
+    y?: number;
+}
+
+class C implements A {
+    x = 0;
+}
+const c = new C();
+//Property 'y' does not exist on type 'C'.
+c.y = 10;
+
+//extends Clauses
+
+class Animal2 {
+    move(){
+        console.log("Moving along!")
+    }
+}
+
+class Dog extends Animal2 {
+    woof(times: number){
+        for(let i = 0; i < times; i++){
+            console.log("woof!");
+        }
+    }
+}
+
+const ddd = new Dog();
+ddd.move();
+ddd.woof();
+
+//overriding methods
+
+class theBase {
+    greet(){
+        console.log("Hello, world!")
+    }
+}
+
+class Derived2 extends theBase {
+    greet(name?: string){
+        if(name === undefined){
+            super.greet();
+
+        }else {
+            console.log(`yoy, ${name.toUpperCase()}`);
+        }
+    }
+}
+
+const dd = new Derived2();
+dd.greet();
+dd.greet("reader");
+
+const B: theBase = d;
+B.greet();
+
+class thaBase {
+    greet(){
+        console.log("yo world");
+    }
+}
+
+class thaDerived extends thaBase {
+    //Property 'greet' in type 'Derived' is not assignable to the same property in base type 'Base'.
+    //Type '(name: string) => void' is not assignable to type '() => void'.
+    greet(name: string){
+        console.log(`hello, ${name.toUpperCase()}`);
+    }
+}
+
+declare class base {
+    greet(): void;
+}
+declare class derived extends base {};
+
+const bq: base = new derived();
+//// Crashes because "name" will be undefined
+bq.greet();
+
+//type-only field declarations
+interface AnimalA {
+    dateOfBirth: any;
+}
+
+interface DogA extends AnimalA {
+    breed: any;
+}
+
+class AnimalHouse {
+    resident: AnimalA;
+    constructor(animal: AnimalA){
+        this.resident = animal;
+    }
+}
+
+class DogHouse extends AnimalHouse{
+    //
+    //
+    declare resident: DogA;
+    constructor(dog: DogA) {
+        super(dog);   
+    }  
 }
