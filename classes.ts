@@ -343,8 +343,8 @@ class MesError extends Error {
 
 //public
 
-class Onemore{
-    public hi(){
+class Onemore {
+    public hi() {
         console.log("zdorov")
     }
 }
@@ -355,17 +355,17 @@ g.hi();
 //protected
 //protected members are only visible to subclasses of the class they're declared in
 
-class oohHi{
-    public sayHi(){
+class oohHi {
+    public sayHi() {
         console.log("Hello, " + this.getname());
     }
-    protected getname(){
+    protected getname() {
         return "ya!"
     }
 }
 
-class sHello extends oohHi{
-    public howdy(){
+class sHello extends oohHi {
+    public howdy() {
         console.log("Howdy, " + this.getname());
     }
 }
@@ -395,18 +395,18 @@ console.log(y.d)//okay
 class fromScratch {
     protected x: number = 1;
 }
-class der1 extends fromScratch{
+class der1 extends fromScratch {
     protected x: number = 5;
 }
 class der2 extends fromScratch {
-    f1(other: der2){
+    f1(other: der2) {
         other.x = 10;
     }
-    f2(other: fromScratch){
+    f2(other: fromScratch) {
         //Property 'x' is protected and only accessible through an instance of class 'der2'. This is an instance of class 'fromScratch'.
-        other.x =10;
+        other.x = 10;
     }
-} 
+}
 
 //private
 
@@ -421,7 +421,7 @@ const p = new FundamentalsFirst();
 //Property 'of' is private and only accessible within class 'FundamentalsFirst'
 console.log(p.of)
 class FundamentalsSecond extends FundamentalsFirst {
-    showX(){
+    showX() {
         //Property 'of' is private and only accessible within class 'FundamentalsFirst'.
         console.log(this.of)
     }
@@ -441,8 +441,8 @@ class dance extends house {
 
 //cross-instance private access
 class FF {
-    private x =11;
-    public sameAs(other: FF){
+    private x = 11;
+    public sameAs(other: FF) {
         return other.x === this.x;
     }
 }
@@ -469,13 +469,13 @@ console.log(qq["secKey"]);
 class niceDog {
     #barkAmount = 0;
     personality = "happy";
-    constructor(){}
+    constructor() { }
 }
 
 //"use" strict
 var _Dog_barkAmount;
-class theDog{
-    constructor(){
+class theDog {
+    constructor() {
         _Dog_barkAmount.set(this, 0)
         this.persn = "happy";
     }
@@ -490,7 +490,7 @@ _Dog_barkAmount = new WeakMap();
 
 class yourClass {
     static x = 0;
-    static printX(){
+    static printX() {
         console.log(yourClass.x);
     }
 }
@@ -507,8 +507,8 @@ console.log(futureClass.x);
 
 //static members are also inherited
 
-class furuteBase{
-    static getG(){
+class furuteBase {
+    static getG() {
         return "!"
     }
 }
@@ -526,12 +526,12 @@ class S {
 //why no static classes?
 
 class MyStaticClass {
-    static someSome(){}
+    static someSome() { }
 }
 
-function someSome(){}
+function someSome() { }
 const MyHeplerOject = {
-    doSomething(){}
+    doSomething() { }
 }
 
 //"Static" BLOCKS IN CLASSES
@@ -542,15 +542,15 @@ declare function loadLastInstances(): any[]
 
 class Foo {
     static #count = 0;
-    get count(){
+    get count() {
         return Foo.#count;
     }
     static {
-        try{
+        try {
             const lastInstances = loadLastInstances();
             Foo.#count += lastInstances.length;
         }
-        catch{}
+        catch { }
     }
 }
 
@@ -560,7 +560,7 @@ class Foo {
 //inferref the same way as in function call;
 class BOX<Type> {
     contents: Type;
-    constructor(value: Type){
+    constructor(value: Type) {
         this.contents = value;
     }
 }
@@ -582,3 +582,166 @@ class beat<Type>{
 //the static member of a generic class can never refer to the class's type parameters.
 
 
+//"this" ar Runtime in Classes
+
+//it's important to remember that TS doen't change the runtim behavior
+//of JS, and that JS is somewhat famous for having some peculiar runtime 
+//behavoirs
+
+class ofMyClass {
+    name = "MyClass";
+    gotName() {
+        return this.name
+    }
+}
+const m = new ofMyClass();
+const objekt = {
+    name: "objekt",
+    gotName: m.gotName,
+}
+//prints "obj", not "MyClass"
+console.log(objekt.gotName());
+
+//this is rarely what you want to happen. TS provides some ways to
+//mitigate or prevent this kind of error.
+
+//arrow functions
+
+//if you have a function that will often be called in a way that loses
+//its "this" context, it can make sense to use an arrow function 
+//property instead of a method.
+
+class secondMyClass {
+    name = "MyClass";
+    sGetName = () => {
+        return this.name;
+    }
+}
+const ny = new secondMyClass();
+const mb = ny.sGetName;
+console.log(mb())
+
+//"this" parameters
+
+//in a method or functions definition, an initial parameter names "this"
+//has a special meaning in TS
+//these parameter are erased during compilation
+type typ = any;
+function func(this: typ, x: number) {
+
+}
+
+//TS checks that calling a function with a "this" parameter is done so with a correct
+//context. instead of using an arrow function, we can add a "this"
+//parameter to method definitions to statically enforce that the mehtod is 
+//called correctly
+
+class thirdMyClass {
+    name = "thirdtry";
+    gName(this: thirdMyClass) {
+        return this.name;
+    }
+}
+const zx = new thirdMyClass();
+//ok
+zx.gName();
+const bb = zx.gName;
+//The 'this' context of type 'void' is not assignable to method's 'this' of type 'thirdMyClass'.
+console.log(bb())
+
+//"this" types
+
+class hugeBox {
+    contents: string = "";
+    //(method) hugeBox.set(value: string): this
+    set(value: string) {
+        this.contents = value;
+        return this;
+    }
+}
+
+
+class Bx {
+    contents: string = "";
+    set(value: string) {
+        this.contents = value;
+        return this;
+    }
+}
+class ClearableBox extends Bx {
+    clear() {
+        this.contents = "";
+    }
+}
+
+const AA = new ClearableBox();
+//const BB: ClearableBox
+const BB = AA.set("yo");
+
+//can also use "this" in a parameter type annoation
+
+class Can {
+    content: string = "";
+    sameAs(other: this){
+        return other.content === this.content;
+    }
+}
+
+//this is different from writing "other: Box"
+//if a derived method -> sameAs method will now only accept other
+//instance of that same derived class;
+
+class One {
+    content: string = "";
+    sameAs(other: this){
+        return other.content === this.content;
+    }
+}
+
+class DerivedBox extends One {
+    otherContent: string = "?";
+}
+
+const theB = new One();
+
+const deriv = new DerivedBox();
+//Argument of type 'One' is not assignable to parameter of type 'DerivedBox'.
+//Property 'otherContent' is missing in type 'One' but required in type 'DerivedBox'
+deriv.sameAs(theB);
+
+//"this" - based type guards
+
+class FileSystemObject {
+    isFile(): this is FileRep {
+        return this instanceof FileRep;
+    }
+    isDirectory(): this is Directory {
+        return this instanceof Directory;
+    }
+    isNetworked(): this is Networked & this {
+        return this.networked;
+    }
+    constructor(public path: string, private networked: boolean) {}
+}
+class FileRep extends FileSystemObject {
+    constructor(path: string, public content: string){
+        super(path, false)
+    }
+}
+
+class Directory extends FileSystemObject {
+    children: FileSystemObject[];
+}
+
+interface Networked{
+    host: string;
+}
+
+const fso: FileSystemObject = new FileRep("foo/bar.txt", "foo");
+if (fso.isFile()){
+fso.content;
+}else if (fso.isDirectory()){
+    fso.children;
+}else if (fso.isNetworked()){
+    fso.host;
+}
