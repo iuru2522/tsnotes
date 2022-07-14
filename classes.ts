@@ -682,7 +682,7 @@ const BB = AA.set("yo");
 
 class Can {
     content: string = "";
-    sameAs(other: this){
+    sameAs(other: this) {
         return other.content === this.content;
     }
 }
@@ -693,7 +693,7 @@ class Can {
 
 class One {
     content: string = "";
-    sameAs(other: this){
+    sameAs(other: this) {
         return other.content === this.content;
     }
 }
@@ -721,10 +721,10 @@ class FileSystemObject {
     isNetworked(): this is Networked & this {
         return this.networked;
     }
-    constructor(public path: string, private networked: boolean) {}
+    constructor(public path: string, private networked: boolean) { }
 }
 class FileRep extends FileSystemObject {
-    constructor(path: string, public content: string){
+    constructor(path: string, public content: string) {
         super(path, false)
     }
 }
@@ -733,15 +733,85 @@ class Directory extends FileSystemObject {
     children: FileSystemObject[];
 }
 
-interface Networked{
+interface Networked {
     host: string;
 }
 
 const fso: FileSystemObject = new FileRep("foo/bar.txt", "foo");
-if (fso.isFile()){
-fso.content;
-}else if (fso.isDirectory()){
+if (fso.isFile()) {
+    //const fso: FileRep
+    fso.content;
+} else if (fso.isDirectory()) {
+    //const fso: Directory
     fso.children;
-}else if (fso.isNetworked()){
+} else if (fso.isNetworked()) {
+    //const fso: Networked & FileSystemObject
     fso.host;
 }
+
+// a common use-case for a this-based type guard is to allow for a lazy loading of a
+//particular field.
+//for example, this case remover an "undefined" from the value held inside
+//box when hasValue has been varified to be true;
+
+class zeBox<T>{
+    valu?: T;
+    hasValue(): this is { valu: T } {
+        return this.valu !== undefined;
+    }
+}
+const zebox = new zeBox();
+zebox.valu = "gameboy";
+//(property) zeBox<unknown>.valu?: unknown
+zebox.valu;
+if (zebox.hasValue()) {
+    //(property) valu: unknown
+    zebox.valu
+}
+
+//parameter properties
+
+class Params {
+    constructor(
+        public readonly x: number,
+        protected y: number,
+        private z: number
+    ) {
+        //
+    }
+}
+const param = new Params(1, 2, 3);
+//(property) Params.x: number
+console.log(param.x);
+//Property 'z' is private and only accessible within class 'Params'.
+console.log(param.z);
+
+//Class expressions
+
+const someClass = class<Type>{
+    content: Type;
+    constructor(value: Type){
+        this.content = value;
+    }
+}
+//const oo: someClass<string>
+const oo = new someClass("hello, world");
+
+//"abstract" classes and members
+//classes, method and fields in TS may be abstract
+//an abstract method or abstrat field is one that hasn't ad an
+//implementation provided. Thses members must exist inside an abstract class
+// which cannot be directly instantiated.
+
+//the role of abstract classes is to serve as a base class for subclasses which do
+//implement all the abstract members. when a class doen't have any abstract
+//members, it is said to be concrete
+
+abstract class Baze{
+    abstract getName(): string;
+    printName(){
+        console.log("hello, " + this.getName());
+    }
+}
+//Cannot create an instance of an abstract class.
+const v = new Baze();
