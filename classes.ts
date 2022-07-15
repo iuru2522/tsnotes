@@ -815,3 +815,66 @@ abstract class Baze{
 }
 //Cannot create an instance of an abstract class.
 const v = new Baze();
+
+class Derivd extends Baze {
+    getName()  {
+        return "world"
+    }
+}
+const t = new Derivd();
+t.printName();
+//Non-abstract class 'Derive' does not implement inherited abstract member 'getName' from class 'Baze'.
+class Derive extends Baze {
+
+}
+
+//abstract construct signatures
+// function poutine(ctor: typeof Baze) {
+//     const instance = new ctor();
+//     //Cannot create an instance of an abstract class.
+//     instance.printName()
+// }
+// //bad!
+// poutine(Baze);
+
+function poutine(ctor: new() => Baze){
+    const instance = new ctor();
+    instance.printName();
+}
+
+//now TS correctly tells you about which class constructor functions
+//can be invoked - Derivd can because it's concrete, but "Baze" cannot
+poutine(Derivd);
+//Argument of type 'typeof Baze' is not assignable to parameter of type 'new () => Baze'.
+//Cannot assign an abstract constructor type to a non-abstract constructor type.
+poutine(Baze);
+
+//relationship between classes
+
+//can be used in place of each other because they're identical
+class Point1 {
+    x = 0;
+    y = 0;
+}
+
+class Point2 {
+    x = 0;
+    y = 0;
+}
+
+const gggg: Point1 = new Point2();
+
+//subtype relationships between classes exist even if there's no explicit
+//inheritance
+
+class Persn {
+    name: string;
+    age: number;
+}
+
+class Employe {
+    name: string;
+    age: number;
+    salary: number;
+}
+const per: Person = new Employe();
