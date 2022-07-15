@@ -878,3 +878,19 @@ class Employe {
     salary: number;
 }
 const per: Person = new Employe();
+//empty classes have no members.
+//in s structural type system, a type with no members is generally
+//a supertype of anything else.
+
+class Empty{}
+function funct(x: Empty) {
+    //
+}
+funct(window);
+funct({});
+funct(funct)
+
+
+for (){
+    
+}
