@@ -23,3 +23,22 @@
 // //can be inported 
 // import hi from "./hello.js"
 // hi();
+
+//in addition to the default export, you can have more than one 
+//export of variablws and functions via the export  by omitting "default"
+
+export var pi = 3.14;
+export let squareTwo = 1.41;
+export const phi = 1.61;
+export class RandomNumberGenerator {};
+
+export function absolute(num: number){
+    if (num < 0) return num * -1;
+    return num;
+}
+//there can be used in another file via "import" syntax:
+
+// import {pi, phi, absolute} from "./math.js"
+console.log(pi)
+//to be const absPhi: number
+const abshPhi = absolute(phi);
